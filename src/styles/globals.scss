@@ -18,8 +18,8 @@ body {
 }
 
 body {
-  color: black;
-  background-color: white;
+  color: $black;
+  background-color: $white;
   font-family: $font-family-poppins;
   line-height: 1.5;
   font-size: 16px;
@@ -30,4 +30,14 @@ body {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
 }
