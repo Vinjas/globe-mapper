@@ -1,44 +1,69 @@
 import styled from 'styled-components';
-import { Button } from 'antd';
-import { useContext, useState } from 'react';
-import { useMapEvents } from 'react-leaflet';
-import { LatLngTuple } from 'leaflet';
+import { useContext } from 'react';
 import { MapContext } from '@/context/mapContext';
+import { useQuery } from '@apollo/client';
+import { FILTER_COUNTRIES_BY_NAME, GET_COUNTRY } from '@/pages/api/country';
+import { CountryDataPanel } from '@/components';
+import { isEmpty } from 'lodash-es';
+
+interface CountryList {
+  code: string;
+  name: string;
+}
+
+interface Country {
+  name: string;
+  native: string;
+  capital: string;
+  currency: string;
+  languages: {
+    code: string;
+    name: string;
+  }[];
+}
 
 const StyledSidePanel = styled.div`
   display: flex;
   flex-direction: column;
   height: 100%;
   gap: 1rem;
-  padding: 1.5rem;
-`;
-
-const StyledSidePanelContent = styled.div`
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-  gap: 1rem;
 `;
 
 export function SidePanel(): JSX.Element {
-  const [position, setPosition] = useState(null);
+  const { selectedCountry } = useContext<any>(MapContext);
 
-  const { mapInstance } = useContext<any>(MapContext);
+  const {
+    loading: loadingCountryFilter,
+    error: errorCountryFilter,
+    data: dataFilteredCountry
+  } = useQuery<{
+    countries: CountryList[];
+  }>(FILTER_COUNTRIES_BY_NAME, {
+    variables: { name: selectedCountry }
+  });
 
-  const testCoordinates: LatLngTuple = [40.41358972870147, -3.702227989122383];
+  const {
+    loading: loadingCountryData,
+    error: errorContryData,
+    data: dataCountryInfo
+  } = useQuery<{ country: Country }>(GET_COUNTRY, {
+    variables: {
+      code: dataFilteredCountry?.countries[0]?.code
+    },
+    skip: !dataFilteredCountry || !dataFilteredCountry.countries[0]?.code
+  });
 
-  function handleOnClick() {
-    mapInstance.flyTo(testCoordinates, 10, { duration: 2 });
-  }
+  const isLoading = loadingCountryFilter || loadingCountryData;
+  const isError = errorCountryFilter || errorContryData;
 
   return (
     <StyledSidePanel>
-      <h1>SidePanel</h1>
-      <StyledSidePanelContent>
-        <Button type="primary" onClick={handleOnClick}>
-          Fly to Spain
-        </Button>
-      </StyledSidePanelContent>
+      {isLoading && <p>Loading...</p>}
+      {isError && <p>Error</p>}
+      {!isLoading && isEmpty(dataCountryInfo) && <p>No Data</p>}
+      {!isLoading && !isEmpty(dataCountryInfo) && !isLoading && !isError && (
+        <CountryDataPanel country={dataCountryInfo.country} />
+      )}
     </StyledSidePanel>
   );
 }

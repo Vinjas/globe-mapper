@@ -1,12 +1,29 @@
 import { useContext, useEffect, useState } from 'react';
-import Leaflet, { LatLngTuple } from 'leaflet';
+import Leaflet from 'leaflet';
 import * as ReactLeaflet from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import styled from 'styled-components';
 import { MapContext } from '@/context/mapContext';
 import { GeoJSON } from 'react-leaflet';
-import { Layer, LeafletMouseEvent, Geometry } from 'leaflet';
+import { Layer, LeafletMouseEvent } from 'leaflet';
 import * as geoJsonData from '@/data/countries.geo.json';
+
+interface MapProps {
+  children: any;
+  width: number;
+  height: number;
+}
+
+interface Feature {
+  type: string;
+  properties: {
+    name: string;
+  };
+  geometry: {
+    type: string;
+    coordinates: number[] | number[][] | number[][][];
+  };
+}
 
 const { MapContainer } = ReactLeaflet;
 
@@ -17,51 +34,35 @@ const StyledMapContainer = styled(MapContainer)`
   box-shadow: 0px 4px 13px 0px rgba(0, 0, 0, 0.25);
 `;
 
-interface MapProps {
-  children: any;
-  width: number;
-  height: number;
-  center: LatLngTuple;
-  zoom: number;
-}
-
-interface GeoJSONData {
-  type: string;
-  features: Feature[];
-}
-
-interface Feature {
-  type: string;
-  properties: {
-    name: string;
-    // Otras propiedades según tu GeoJSON
-  };
-  geometry: {
-    type: string;
-    coordinates: number[] | number[][] | number[][][];
-    // Otros campos según tu GeoJSON
-  };
-}
-
 function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
-  const { setMapInstance } = useContext<any>(MapContext);
+  const { setMapInstance, setCurrentCoordinates, setSelectedCountry } =
+    useContext<any>(MapContext);
 
   const [map, setMap] = useState<any>(null);
   const [highlightedFeature, setHighlightedFeature] = useState(null);
+  const [overFeature, setOverFeature] = useState(null);
 
   const geojsonFeatureStyle = {
-    color: '#3388ff',
+    color: '#384782',
     weight: 2,
     opacity: 0.7,
-    fillColor: '#3388ff',
-    fillOpacity: 0.2
+    fillColor: '#384782',
+    fillOpacity: 0.3
+  };
+
+  const overFeatureStyle = {
+    color: '#172152',
+    weight: 3,
+    opacity: 0.7,
+    fillColor: '#172152',
+    fillOpacity: 0.4
   };
 
   const highlightedFeatureStyle = {
-    color: '#ff0000',
-    weight: 3,
+    color: '#090a29',
+    weight: 4,
     opacity: 0.7,
-    fillColor: '#ff0000',
+    fillColor: '#090a29',
     fillOpacity: 0.4
   };
 
@@ -83,9 +84,6 @@ function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
   }, [map, setMapInstance]);
 
   function handleOnEachFeature(feature: Feature, layer: Layer) {
-    layer.bindPopup(getPopupContent(feature.properties), {
-      className: 'custom-popup-container'
-    });
     layer.on({
       click: handleOnClick,
       mouseover: onFeatureMouseOver,
@@ -94,39 +92,44 @@ function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
   }
 
   function handleOnClick(event: LeafletMouseEvent) {
-    console.log('Clicked on ' + event.target.feature.properties.name);
-  }
+    const { lat, lng } = event.latlng;
+    setCurrentCoordinates([lat, lng]);
+    setSelectedCountry(event.target.feature.properties.name);
 
-  const onFeatureMouseOver = (event) => {
     const layer = event.target;
     layer.setStyle(highlightedFeatureStyle);
     setHighlightedFeature(layer.feature);
-  };
-
-  const onFeatureMouseOut = (event) => {
-    const layer = event.target;
-    layer.setStyle(geojsonFeatureStyle);
-    setHighlightedFeature(null);
-  };
-
-  function getPopupContent(properties) {
-    return `
-      <div>
-        <h2>${properties.name}</h2>
-      </div>
-    `;
   }
+
+  const onFeatureMouseOver = (event: LeafletMouseEvent) => {
+    const layer = event.target;
+    layer.setStyle(overFeatureStyle);
+    setOverFeature(layer.feature);
+  };
+
+  const onFeatureMouseOut = (event: LeafletMouseEvent) => {
+    const layer = event.target;
+
+    layer.setStyle(geojsonFeatureStyle);
+    setOverFeature(null);
+  };
 
   return (
     <StyledMapContainer ref={(map) => setMap(map)} {...rest}>
       {children(ReactLeaflet, Leaflet)}
       <GeoJSON
         data={geoJsonData as any}
-        style={(feature) =>
-          feature === highlightedFeature
-            ? highlightedFeatureStyle
-            : geojsonFeatureStyle
-        }
+        style={(feature) => {
+          if (feature === highlightedFeature) {
+            return highlightedFeatureStyle;
+          }
+
+          if (feature === overFeature) {
+            return overFeatureStyle;
+          }
+
+          return geojsonFeatureStyle;
+        }}
         onEachFeature={handleOnEachFeature as any}
       />
     </StyledMapContainer>
