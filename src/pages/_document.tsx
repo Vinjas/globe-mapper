@@ -8,6 +8,10 @@ export default function Document() {
           rel="stylesheet"
           href="https://unpkg.com/leaflet/dist/leaflet.css"
         />
+        <link
+          rel="stylesheet"
+          href="https://cdn.jsdelivr.net/gh/lipis/flag-icons@7.0.0/css/flag-icons.min.css"
+        />
       </Head>
       <body>
         <Main />

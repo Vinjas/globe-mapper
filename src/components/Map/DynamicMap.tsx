@@ -7,6 +7,8 @@ import { MapContext } from '@/context/mapContext';
 import { GeoJSON } from 'react-leaflet';
 import { Layer, LeafletMouseEvent } from 'leaflet';
 import * as geoJsonData from '@/data/countries.geo.json';
+import { COLORS } from '@/styles/colors';
+import { getCountryISO2 } from '@/utils/countryAlpha3Converter';
 
 interface MapProps {
   children: any;
@@ -34,6 +36,30 @@ const StyledMapContainer = styled(MapContainer)`
   box-shadow: 0px 4px 13px 0px rgba(0, 0, 0, 0.25);
 `;
 
+const geojsonFeatureStyle = {
+  color: COLORS.bluePrimary,
+  weight: 2,
+  opacity: 0.7,
+  fillColor: COLORS.bluePrimary,
+  fillOpacity: 0.3
+};
+
+const overFeatureStyle = {
+  color: COLORS.blueSecondary,
+  weight: 3,
+  opacity: 0.7,
+  fillColor: COLORS.blueSecondary,
+  fillOpacity: 0.4
+};
+
+const highlightedFeatureStyle = {
+  color: COLORS.blueDark,
+  weight: 4,
+  opacity: 0.7,
+  fillColor: COLORS.blueDark,
+  fillOpacity: 0.4
+};
+
 function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
   const { setMapInstance, setCurrentCoordinates, setSelectedCountry } =
     useContext<any>(MapContext);
@@ -41,30 +67,6 @@ function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
   const [map, setMap] = useState<any>(null);
   const [highlightedFeature, setHighlightedFeature] = useState(null);
   const [overFeature, setOverFeature] = useState(null);
-
-  const geojsonFeatureStyle = {
-    color: '#384782',
-    weight: 2,
-    opacity: 0.7,
-    fillColor: '#384782',
-    fillOpacity: 0.3
-  };
-
-  const overFeatureStyle = {
-    color: '#172152',
-    weight: 3,
-    opacity: 0.7,
-    fillColor: '#172152',
-    fillOpacity: 0.4
-  };
-
-  const highlightedFeatureStyle = {
-    color: '#090a29',
-    weight: 4,
-    opacity: 0.7,
-    fillColor: '#090a29',
-    fillOpacity: 0.4
-  };
 
   useEffect(() => {
     (async function init() {
@@ -94,7 +96,10 @@ function Map({ children, width, height, ...rest }: MapProps): JSX.Element {
   function handleOnClick(event: LeafletMouseEvent) {
     const { lat, lng } = event.latlng;
     setCurrentCoordinates([lat, lng]);
-    setSelectedCountry(event.target.feature.properties.name);
+
+    const countryISO2Code = getCountryISO2(event.target.feature.id);
+
+    setSelectedCountry(countryISO2Code);
 
     const layer = event.target;
     layer.setStyle(highlightedFeatureStyle);

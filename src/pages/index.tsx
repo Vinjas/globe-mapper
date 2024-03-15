@@ -20,7 +20,7 @@ const StyledBody = styled.div`
   display: flex;
   flex-direction: column;
   justify="space-between";
-  gap: 3rem;
+  gap: 2rem;
   height: 80vh;
 `;
 

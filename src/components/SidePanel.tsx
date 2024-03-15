@@ -5,6 +5,8 @@ import { useQuery } from '@apollo/client';
 import { FILTER_COUNTRIES_BY_NAME, GET_COUNTRY } from '@/pages/api/country';
 import { CountryDataPanel } from '@/components';
 import { isEmpty } from 'lodash-es';
+import { LoadingOutlined } from '@ant-design/icons';
+import { COLORS } from '@/styles/colors';
 
 interface CountryList {
   code: string;
@@ -12,12 +14,17 @@ interface CountryList {
 }
 
 interface Country {
+  code: string;
   name: string;
   native: string;
   capital: string;
-  currency: string;
+  currencies: string[];
   languages: {
-    code: string;
+    name: string;
+    native: string;
+  }[];
+  phones: string[];
+  states: {
     name: string;
   }[];
 }
@@ -29,10 +36,17 @@ const StyledSidePanel = styled.div`
   gap: 1rem;
 `;
 
+const StyledLoader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+`;
+
 export function SidePanel(): JSX.Element {
   const { selectedCountry } = useContext<any>(MapContext);
 
-  const {
+  /*  const {
     loading: loadingCountryFilter,
     error: errorCountryFilter,
     data: dataFilteredCountry
@@ -40,7 +54,7 @@ export function SidePanel(): JSX.Element {
     countries: CountryList[];
   }>(FILTER_COUNTRIES_BY_NAME, {
     variables: { name: selectedCountry }
-  });
+  }); */
 
   const {
     loading: loadingCountryData,
@@ -48,19 +62,23 @@ export function SidePanel(): JSX.Element {
     data: dataCountryInfo
   } = useQuery<{ country: Country }>(GET_COUNTRY, {
     variables: {
-      code: dataFilteredCountry?.countries[0]?.code
-    },
-    skip: !dataFilteredCountry || !dataFilteredCountry.countries[0]?.code
+      code: selectedCountry
+    }
   });
 
-  const isLoading = loadingCountryFilter || loadingCountryData;
-  const isError = errorCountryFilter || errorContryData;
+  const isLoading = loadingCountryData;
+  const isError = errorContryData;
 
   return (
     <StyledSidePanel>
-      {isLoading && <p>Loading...</p>}
-      {isError && <p>Error</p>}
-      {!isLoading && isEmpty(dataCountryInfo) && <p>No Data</p>}
+      {isLoading && (
+        <StyledLoader>
+          <LoadingOutlined
+            style={{ fontSize: '4rem', color: COLORS.blueDark }}
+          />
+        </StyledLoader>
+      )}
+      {!isLoading && isError && <p>No Data</p>}
       {!isLoading && !isEmpty(dataCountryInfo) && !isLoading && !isError && (
         <CountryDataPanel country={dataCountryInfo.country} />
       )}

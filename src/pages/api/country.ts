@@ -21,19 +21,16 @@ export const FILTER_COUNTRIES_BY_NAME = gql`
 export const GET_COUNTRY = gql`
   query getCountry($code: ID!) {
     country(code: $code) {
+      code
       name
       native
       capital
       currencies
       languages {
-        code
         name
         native
       }
       phones
-      continent {
-        name
-      }
       states {
         name
       }
