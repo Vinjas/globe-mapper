@@ -1,11 +1,21 @@
 import { MapContext } from '@/context/mapContext';
-import { ZoomInOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import {
+  CommentOutlined,
+  DollarOutlined,
+  HomeOutlined,
+  PhoneOutlined,
+  RightOutlined,
+  ZoomInOutlined
+} from '@ant-design/icons';
+import { Button, StatesModal } from '@/components';
+import { Divider, Collapse } from 'antd';
 import { isEmpty } from 'lodash-es';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { COLORS } from '@/styles/colors';
 import styled from 'styled-components';
 import { CURRENCY_SYMBOL_MAPPING } from '@/constants/currencySymbol';
+
+const { Panel } = Collapse;
 
 interface Country {
   code: string;
@@ -40,13 +50,41 @@ const StyledFlag = styled.span`
   font-size: 2rem;
 `;
 
-const StyledZoomButton = styled(Button)`
-  font-family: 'Poppins', sans-serif;
-  font-size: 1rem;
-  background-color: ${COLORS.bluePrimary};
-  &:hover {
-    background-color: ${COLORS.blueSecondary};
-  }
+const StyledContent = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+`;
+
+const StyledColumn = styled.div`
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 1rem;
+  border: 1px solid ${COLORS.lightGray};
+  padding: 1.5rem 2rem;
+  margin-top: 2rem;
+  border-radius: 10px;
+  background-color: ${COLORS.pureWhite};
+`;
+
+const StyledTag = styled.div`
+  display: flex;
+  color: ${COLORS.bluePrimary};
+  border: 1px solid ${COLORS.bluePrimary};
+  align-items: center;
+  border-radius: 10px;
+  padding: 0 0.5rem;
+  gap: 1rem;
+`;
+
+const StyledTagList = styled.div`
+  display: flex;
+  flex-direction: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  overflow: auto;
 `;
 
 export function CountryDataPanel({
@@ -59,8 +97,18 @@ export function CountryDataPanel({
   const { code, name, native, capital, currencies, languages, phones, states } =
     country;
 
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
   function handleOnClick() {
     mapInstance.flyTo(currentCoordinates, 6, { duration: 2 });
+  }
+
+  function handleOpenStatesModal() {
+    setIsModalVisible(true);
+  }
+
+  function handleModalClose() {
+    setIsModalVisible(false);
   }
 
   return (
@@ -70,62 +118,90 @@ export function CountryDataPanel({
           <StyledFlag className={`fi fi-${code.toLowerCase()}`} />
           <h1>{name}</h1>
           <div>{native}</div>
+
+          {!isEmpty(states) && (
+            <Button type="secondary" onClick={handleOpenStatesModal}>
+              <RightOutlined />
+              <span>View States</span>
+            </Button>
+          )}
         </StyledNameTag>
 
-        <StyledZoomButton
-          icon={<ZoomInOutlined />}
-          type="primary"
-          onClick={handleOnClick}
-        >
+        <Button onClick={handleOnClick}>
+          <ZoomInOutlined />
           <span>{`Fly to ${name}`}</span>
-        </StyledZoomButton>
+        </Button>
       </StyledNameWrapper>
 
-      <div>
-        <h3>Capital</h3>
-        <div>{capital}</div>
-      </div>
-      <div>
-        <h3>Currency</h3>
-        {currencies.map((currency: string, i: number) => {
-          const currencySymbol =
-            CURRENCY_SYMBOL_MAPPING[
-              currency as keyof typeof CURRENCY_SYMBOL_MAPPING
-            ];
+      <StyledContent>
+        <StyledColumn>
+          <StyledTagList>
+            <StyledNameWrapper>
+              <HomeOutlined />
+              <h2>Capital:</h2>
+            </StyledNameWrapper>
 
-          return (
-            <div key={i}>
-              <span>{currency}</span>
-              {currencySymbol && <span>{` - ${currencySymbol}`}</span>}
-              <span></span>
-            </div>
-          );
-        })}
-      </div>
-      <div>
-        <h3>Languages</h3>
-        {languages.map((l: any, i: number) => (
-          <div key={i}>
-            <span>{l.name}</span>
-          </div>
-        ))}
-      </div>
-      <div>
-        <h3>Phone Prefix</h3>
-        {phones.map((phone: string, i: number) => (
-          <div key={i}>{`+${phone}`}</div>
-        ))}
-      </div>
-      {!isEmpty(states) && (
-        <>
-          <h2>States</h2>
-          <div>
-            {states.map((state: any, i: number) => (
-              <div key={i}>{state.name}</div>
+            <StyledTag>{capital}</StyledTag>
+          </StyledTagList>
+
+          <StyledTagList>
+            <StyledNameWrapper>
+              <CommentOutlined />
+              <h2>Languages:</h2>
+            </StyledNameWrapper>
+
+            <StyledNameWrapper>
+              {languages.map((l: any, i: number) => (
+                <StyledTag key={i}>
+                  <span>{l.name}</span>
+                </StyledTag>
+              ))}
+            </StyledNameWrapper>
+          </StyledTagList>
+        </StyledColumn>
+
+        <StyledColumn>
+          <StyledTagList>
+            <StyledNameWrapper>
+              <PhoneOutlined />
+              <h2>Phone Prefix:</h2>
+            </StyledNameWrapper>
+            {phones.map((phone: string, i: number) => (
+              <StyledTag key={i}>{`+${phone}`}</StyledTag>
             ))}
-          </div>
-        </>
-      )}
+          </StyledTagList>
+
+          <StyledTagList>
+            <StyledNameWrapper>
+              <DollarOutlined />
+              <h2>Currency:</h2>
+            </StyledNameWrapper>
+
+            <StyledNameWrapper>
+              {currencies.map((currency: string, i: number) => {
+                const currencySymbol =
+                  CURRENCY_SYMBOL_MAPPING[
+                    currency as keyof typeof CURRENCY_SYMBOL_MAPPING
+                  ];
+
+                return (
+                  <StyledTag key={i}>
+                    <span>{currency}</span>
+                    {currencySymbol && <span>{` - ${currencySymbol}`}</span>}
+                  </StyledTag>
+                );
+              })}
+            </StyledNameWrapper>
+          </StyledTagList>
+        </StyledColumn>
+      </StyledContent>
+
+      <StatesModal
+        countryName={name}
+        states={states}
+        isOpen={isModalVisible}
+        onCancel={handleModalClose}
+      />
     </div>
   );
 }

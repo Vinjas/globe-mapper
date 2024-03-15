@@ -2,16 +2,10 @@ import styled from 'styled-components';
 import { useContext } from 'react';
 import { MapContext } from '@/context/mapContext';
 import { useQuery } from '@apollo/client';
-import { FILTER_COUNTRIES_BY_NAME, GET_COUNTRY } from '@/pages/api/country';
+import { GET_COUNTRY } from '@/pages/api/country';
 import { CountryDataPanel } from '@/components';
 import { isEmpty } from 'lodash-es';
-import { LoadingOutlined } from '@ant-design/icons';
-import { COLORS } from '@/styles/colors';
-
-interface CountryList {
-  code: string;
-  name: string;
-}
+import { Spin } from 'antd';
 
 interface Country {
   code: string;
@@ -46,16 +40,6 @@ const StyledLoader = styled.div`
 export function SidePanel(): JSX.Element {
   const { selectedCountry } = useContext<any>(MapContext);
 
-  /*  const {
-    loading: loadingCountryFilter,
-    error: errorCountryFilter,
-    data: dataFilteredCountry
-  } = useQuery<{
-    countries: CountryList[];
-  }>(FILTER_COUNTRIES_BY_NAME, {
-    variables: { name: selectedCountry }
-  }); */
-
   const {
     loading: loadingCountryData,
     error: errorContryData,
@@ -73,9 +57,7 @@ export function SidePanel(): JSX.Element {
     <StyledSidePanel>
       {isLoading && (
         <StyledLoader>
-          <LoadingOutlined
-            style={{ fontSize: '4rem', color: COLORS.blueDark }}
-          />
+          <Spin size="large" />
         </StyledLoader>
       )}
       {!isLoading && isError && <p>No Data</p>}

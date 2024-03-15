@@ -9,5 +9,8 @@ export const COLORS = {
 
   bluePrimary: '#384782',
   blueSecondary: '#172152',
-  blueDark: '#090a29'
+  blueDark: '#090a29',
+
+  redPrimary: '#9C3B37',
+  redSecondary: '#6E1D1B'
 };
