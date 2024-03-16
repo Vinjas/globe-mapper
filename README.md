@@ -99,9 +99,4 @@ Jest and React Testing Library are integrated for unit testing of components, co
 * Performance Optimization: Identify and implement optimizations to reduce load times and enhance efficiency.
 * Accessibility: Ensure accessibility features such as keyboard navigation and screen reader compatibility.
 * Error Handling: Implement comprehensive error handling mechanisms and consider edge cases for enhanced stability.
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+* 
