@@ -2,10 +2,10 @@ import styled from 'styled-components';
 import { useContext } from 'react';
 import { MapContext } from '@/context/mapContext';
 import { useQuery } from '@apollo/client';
-import { GET_COUNTRY } from '@/pages/api/country';
+import { GET_COUNTRY } from '@/graphql/country';
 import { CountryDataPanel } from '@/components';
-import { isEmpty } from 'lodash-es';
 import { Spin } from 'antd';
+import { isEmpty } from '@/utils/isEmpty';
 
 interface Country {
   code: string;
@@ -56,14 +56,16 @@ export function SidePanel(): JSX.Element {
   return (
     <StyledSidePanel>
       {isLoading && (
-        <StyledLoader>
+        <StyledLoader data-testid="loader">
           <Spin size="large" />
         </StyledLoader>
       )}
-      {!isLoading && isError && <p>No Data</p>}
-      {!isLoading && !isEmpty(dataCountryInfo) && !isLoading && !isError && (
-        <CountryDataPanel country={dataCountryInfo.country} />
-      )}
+      {!isLoading && isError && <h1>No Data</h1>}
+      {!isLoading &&
+        dataCountryInfo &&
+        !isEmpty(dataCountryInfo) &&
+        !isLoading &&
+        !isError && <CountryDataPanel country={dataCountryInfo.country} />}
     </StyledSidePanel>
   );
 }

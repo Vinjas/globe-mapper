@@ -61,11 +61,11 @@ export default function Main() {
         </Head>
         <StyledBody>
           <StyledMapWrapper ref={mapRef}>
-            <WorldMap height={1000} width={mapWidth} />
+            <WorldMap height={1000} width={mapWidth} data-testid="world-map" />
           </StyledMapWrapper>
 
           <StyledPanelWrapper>
-            <SidePanel />
+            <SidePanel data-testid="side-panel" />
           </StyledPanelWrapper>
         </StyledBody>
       </Layout>

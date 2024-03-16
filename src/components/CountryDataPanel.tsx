@@ -8,12 +8,12 @@ import {
   ZoomInOutlined
 } from '@ant-design/icons';
 import { Button, StatesModal } from '@/components';
-import { isEmpty } from 'lodash-es';
 import { useContext, useState } from 'react';
 import { COLORS } from '@/styles/colors';
 import styled from 'styled-components';
 import { CURRENCY_SYMBOL_MAPPING } from '@/constants/currencySymbol';
 import { device } from '@/styles/breakpoints';
+import { isEmpty } from '@/utils/isEmpty';
 
 interface Country {
   code: string;
@@ -142,6 +142,8 @@ export function CountryDataPanel({
 
   const { code, name, native, capital, currencies, languages, phones, states } =
     country;
+
+  console.log('country', country);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 

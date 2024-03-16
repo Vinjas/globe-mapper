@@ -21,7 +21,7 @@ const StyledGlobalIcon = styled(GlobalOutlined)`
 export function Header() {
   return (
     <StyledHeader>
-      <StyledGlobalIcon />
+      <StyledGlobalIcon data-testid="global-icon" />
       <StyledH1>GlobeMapper</StyledH1>
     </StyledHeader>
   );
