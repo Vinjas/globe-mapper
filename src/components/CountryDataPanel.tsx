@@ -8,14 +8,12 @@ import {
   ZoomInOutlined
 } from '@ant-design/icons';
 import { Button, StatesModal } from '@/components';
-import { Divider, Collapse } from 'antd';
 import { isEmpty } from 'lodash-es';
 import { useContext, useState } from 'react';
 import { COLORS } from '@/styles/colors';
 import styled from 'styled-components';
 import { CURRENCY_SYMBOL_MAPPING } from '@/constants/currencySymbol';
-
-const { Panel } = Collapse;
+import { device } from '@/styles/breakpoints';
 
 interface Country {
   code: string;
@@ -37,13 +35,42 @@ const StyledNameWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 1rem;
+
+  @media ${device.sm} {
+    justify-content: center;
+  }
+`;
+
+const StyledTitleWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   gap: 1rem;
 `;
 
-const StyledNameTag = styled.div`
+const StyledTagsWrapper = styled.div`
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+
+  @media ${device.sm} {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+`;
+
+const StyledTitleTag = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
   gap: 1.5rem;
+
+  @media ${device.sm} {
+    justify-content: center;
+  }
 `;
 
 const StyledFlag = styled.span`
@@ -53,7 +80,13 @@ const StyledFlag = styled.span`
 const StyledContent = styled.div`
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
   gap: 1rem;
+  padding-bottom: 2rem;
+
+  @media ${device.xs} {
+    gap: 0.5rem;
+  }
 `;
 
 const StyledColumn = styled.div`
@@ -66,6 +99,14 @@ const StyledColumn = styled.div`
   margin-top: 2rem;
   border-radius: 10px;
   background-color: ${COLORS.pureWhite};
+
+  @media ${device.sm} {
+    padding: 0.5rem 1rem;
+  }
+
+  @media ${device.xs} {
+    margin-top: 1.5rem;
+  }
 `;
 
 const StyledTag = styled.div`
@@ -81,10 +122,15 @@ const StyledTag = styled.div`
 const StyledTagList = styled.div`
   display: flex;
   flex-direction: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
   gap: 0.5rem;
   overflow: auto;
+
+  @media ${device.sm} {
+    justify-content: flex-start;
+  }
 `;
 
 export function CountryDataPanel({
@@ -114,7 +160,7 @@ export function CountryDataPanel({
   return (
     <div>
       <StyledNameWrapper>
-        <StyledNameTag>
+        <StyledTitleTag>
           <StyledFlag className={`fi fi-${code.toLowerCase()}`} />
           <h1>{name}</h1>
           <div>{native}</div>
@@ -122,10 +168,10 @@ export function CountryDataPanel({
           {!isEmpty(states) && (
             <Button type="secondary" onClick={handleOpenStatesModal}>
               <RightOutlined />
-              <span>View States</span>
+              <span>States</span>
             </Button>
           )}
-        </StyledNameTag>
+        </StyledTitleTag>
 
         <Button onClick={handleOnClick}>
           <ZoomInOutlined />
@@ -136,48 +182,50 @@ export function CountryDataPanel({
       <StyledContent>
         <StyledColumn>
           <StyledTagList>
-            <StyledNameWrapper>
+            <StyledTitleWrapper>
               <HomeOutlined />
               <h2>Capital:</h2>
-            </StyledNameWrapper>
+            </StyledTitleWrapper>
 
             <StyledTag>{capital}</StyledTag>
           </StyledTagList>
 
           <StyledTagList>
-            <StyledNameWrapper>
+            <StyledTitleWrapper>
               <CommentOutlined />
               <h2>Languages:</h2>
-            </StyledNameWrapper>
+            </StyledTitleWrapper>
 
-            <StyledNameWrapper>
+            <StyledTagsWrapper>
               {languages.map((l: any, i: number) => (
                 <StyledTag key={i}>
                   <span>{l.name}</span>
                 </StyledTag>
               ))}
-            </StyledNameWrapper>
+            </StyledTagsWrapper>
           </StyledTagList>
         </StyledColumn>
 
         <StyledColumn>
           <StyledTagList>
-            <StyledNameWrapper>
+            <StyledTitleWrapper>
               <PhoneOutlined />
               <h2>Phone Prefix:</h2>
-            </StyledNameWrapper>
-            {phones.map((phone: string, i: number) => (
-              <StyledTag key={i}>{`+${phone}`}</StyledTag>
-            ))}
+            </StyledTitleWrapper>
+            <StyledTagsWrapper>
+              {phones.map((phone: string, i: number) => (
+                <StyledTag key={i}>{`+${phone}`}</StyledTag>
+              ))}
+            </StyledTagsWrapper>
           </StyledTagList>
 
           <StyledTagList>
-            <StyledNameWrapper>
+            <StyledTitleWrapper>
               <DollarOutlined />
               <h2>Currency:</h2>
-            </StyledNameWrapper>
+            </StyledTitleWrapper>
 
-            <StyledNameWrapper>
+            <StyledTagsWrapper>
               {currencies.map((currency: string, i: number) => {
                 const currencySymbol =
                   CURRENCY_SYMBOL_MAPPING[
@@ -191,7 +239,7 @@ export function CountryDataPanel({
                   </StyledTag>
                 );
               })}
-            </StyledNameWrapper>
+            </StyledTagsWrapper>
           </StyledTagList>
         </StyledColumn>
       </StyledContent>

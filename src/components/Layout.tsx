@@ -16,10 +16,6 @@ const StyledLayout = styled.div`
   }
 
   @media ${device.sm} {
-    padding: 0 2rem;
-  }
-
-  @media ${device.xs} {
     padding: 0 1rem;
   }
 `;

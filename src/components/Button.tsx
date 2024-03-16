@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { COLORS } from '@/styles/colors';
+import { device } from '@/styles/breakpoints';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -32,6 +33,11 @@ export function Button({ children, type, ...props }: ButtonProps): JSX.Element {
       background-color: ${type === 'secondary'
         ? COLORS.blueSecondary
         : COLORS.redSecondary};
+    }
+
+    @media ${device.sm} {
+      font-size: 0.875rem;
+      padding: 0.5rem 0.75rem;
     }
   `;
 
