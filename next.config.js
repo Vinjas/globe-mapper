@@ -6,7 +6,7 @@ const CopyPlugin = require('copy-webpack-plugin');
 const nextConfig = {
   reactStrictMode: true,
   compiler: {
-    styledComponents: true,
+    styledComponents: true
   },
   transpilePackages: [
     'antd',
@@ -15,7 +15,7 @@ const nextConfig = {
     'rc-pagination',
     'rc-picker',
     'rc-notification',
-    'rc-tooltip',
+    'rc-tooltip'
   ],
   webpack: (config) => {
     config.plugins.push(
@@ -23,13 +23,13 @@ const nextConfig = {
         patterns: [
           {
             from: 'node_modules/leaflet/dist/images',
-            to: path.resolve(__dirname, 'public', 'leaflet', 'images'),
-          },
-        ],
-      }),
+            to: path.resolve(__dirname, 'public', 'leaflet', 'images')
+          }
+        ]
+      })
     );
     return config;
-  },
+  }
 };
 
 module.exports = nextConfig;

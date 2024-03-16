@@ -3,7 +3,7 @@ import { Layout, SidePanel } from '@/components';
 import styled from 'styled-components';
 import { WorldMap } from '@/components';
 import MapContextProvider from '@/context/mapContext';
-import { use, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { size } from '@/styles/breakpoints';
 
 const StyledMapWrapper = styled.div`
