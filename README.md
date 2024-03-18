@@ -23,7 +23,7 @@ https://globe-mapper-two.vercel.app/
 
 Clone this repository in your local machine.
 ```bash
-git clone https://github.com/Vinjas/solar-radiation-tool.git
+git clone https://github.com/Vinjas/globe-mapper.git
 ```
 
 Navigate to the root of the project and install all the neccesary dependencies:
